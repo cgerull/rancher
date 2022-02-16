@@ -19,5 +19,12 @@ kubectl apply -f kubernetes/rancher.yaml
 kubectl create ns cert-manager
 kubectl apply -f cert-manager/cert-manager.yaml
 # Wait  until all pods are running.
-
+kubectl create ns cattle-system
+. helm/install-rancher-2.6.sh
 ```
+
+## Postinstall
+Add an entry to `/etc/hosts` `sudo echo "127.0.0.1   rancher.local rancher" >> /etc/hosts`
+Do a port forward `kubectl port-forward -n cattle-system svc/rancher 4443:443`
+Go to `https://rancher:4443` and set trust on self-signed certificate in your browser.
+Run `kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'` to get the boot password.
