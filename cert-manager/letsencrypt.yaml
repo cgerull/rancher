@@ -1,0 +1,57 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+  namespace: default
+spec:
+  acme:
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            labels:
+              gateway: http01-solver
+---
+apiVersion: networking.x-k8s.io/v1alpha1
+kind: Gateway
+metadata:
+  name: traefik
+  namespace: traefik
+spec:
+  gatewayClassName: traefik
+  listeners:
+  - protocol: HTTP
+    port: 80
+    routes:
+      kind: HTTPRoute
+      selector:
+        matchLabels:
+          gateway: http01-solver
+      namespaces:
+        from: All
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rancher-local-tls
+  namespace: cattle-system
+spec:
+  issuerRef:
+    name: letsencrypt
+  dnsNames:
+  - rancher.local
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: example-issuer
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: example-issuer-account-key
+    solvers:
+    - http01:
+       ingress:
+         class: traefik
+
