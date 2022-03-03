@@ -24,7 +24,7 @@ kubectl create ns cattle-system
 ```
 
 ## Postinstall
-Add an entry to `/etc/hosts` `sudo echo "127.0.0.1   rancher.local rancher" >> /etc/hosts`
-Do a port forward `kubectl port-forward -n cattle-system svc/rancher 4443:443`
-Go to `https://rancher:4443` and set trust on self-signed certificate in your browser.
-Run `kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'` to get the boot password.
+- Add an entry to `/etc/hosts` `sudo echo "127.0.0.1   rancher.local rancher" >> /etc/hosts`
+- Do a port forward `kubectl port-forward -n cattle-system svc/rancher 4443:443`
+- Go to `https://rancher:4443` and set trust on self-signed certificate in your browser.
+- Run `kubectl get secret --namespace cattle-system bootstrap-secret -o go-template='{{.data.bootstrapPassword|base64decode}}{{"\n"}}'` to get the boot password.
